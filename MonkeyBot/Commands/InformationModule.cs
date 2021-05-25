@@ -32,7 +32,7 @@ namespace MonkeyBot.Commands
 
         public Discord.Embed GetAboutEmbed()
         {
-            EmbedField _1 = new EmbedField()
+            EmbedField _1 = new EmbedField("")
         }
     }
 }
