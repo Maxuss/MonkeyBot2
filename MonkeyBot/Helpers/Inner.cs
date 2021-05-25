@@ -24,5 +24,15 @@ namespace MonkeyBot.Helpers
             XmlNode tokenNode = nodes[0];
             return tokenNode.InnerText;
         }
+
+        public static string GetHypixelKey()
+        {
+            string path = $"{Directory.GetCurrentDirectory()}\\botconfig.xml";
+            XmlDocument doc = new XmlDocument();
+            doc.Load(path);
+            XmlNodeList nodes = doc.DocumentElement.ChildNodes;
+            XmlNode tokenNode = nodes[2];
+            return tokenNode.InnerText;
+        }
     }
 }
