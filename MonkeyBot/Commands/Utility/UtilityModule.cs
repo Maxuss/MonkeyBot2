@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 using Discord;
@@ -65,6 +66,19 @@ namespace MonkeyBot.Commands.Utility
             string ip, [Summary("Parameter of address. [ip/host]")] string param)
         {
             IUserMessage msg = await ReplyAsync("Looking for geolocation, please wait...");
+            try
+            {
+                await GeolocationHandler(ip, param, msg);
+            }
+            catch (HttpRequestException e)
+            {
+                await msg.ModifyAsync(m => m.Content = $"Looks like an error occurred!\nError type: {e.GetType()} |\nError message: \"{e.Message}\""
+                );
+            }
+        }
+
+        private async Task GeolocationHandler(string ip, string param, IUserMessage msg)
+        {
             switch (param.ToLower())
             {
                 case "ip":
@@ -80,46 +94,54 @@ namespace MonkeyBot.Commands.Utility
         }
 
         private async Task GetGeolocationAsync(string ip, string param, IUserMessage msg)
-        {
-            string url = $"http://ip-api.com/json/{ip}";
-            HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
-            request.AutomaticDecompression = DecompressionMethods.GZip;
-            string data;
-            using (HttpWebResponse response = (HttpWebResponse) request.GetResponse())
-            using (Stream stream = response.GetResponseStream())
-            using (StreamReader reader = new StreamReader(stream))
             {
-                data = await reader.ReadToEndAsync();
-            }
-
-            JObject json = JsonConvert.DeserializeObject<JObject>(data);
-            if (json["status"].Equals("fail"))
-                await msg.ModifyAsync(m =>
-                    m.Content = $"Couldn't find geolocation data, cause: \"{json["message"]}\"");
-            else
-            {
-                string country = (string) json["country"];
-                string cc = ((string) json["countryCode"]).ToLower();
-                string region = (string) json["regionName"];
-                string city = (string) json["city"];
-                string zip = (string) json["zip"];
-                float lat = (float) json["lat"];
-                float lon = (float) json["lon"];
-                string isp = (string) json["isp"];
-                EmbedField f0 = new("Success: ", "true", true);
-                EmbedField f1 = new("Country", $":flag_{cc}: {country}");
-                EmbedField f2 = new("Full Address", $"{region}, {city}");
-                EmbedField f3 = new("Provider Name", $"{isp}");
-                EmbedField f4 = new("Latitude & Longitude", $"Lat: {lat}\nLon: {lon}");
-                EmbedField f5 = new("Zip Code", $"{zip}");
-                Embed e = new Embed("Geolocation Finder", Color.Orange, new[] {f0, f1, f2, f3, f4, f5},
-                    $"{Constants.EMBED_FOOTER} | Adr Query: {ip} ; Param: {param}");
-                await msg.ModifyAsync(m =>
+                string url = $"http://ip-api.com/json/{ip}";
+                HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
+                request.AutomaticDecompression = DecompressionMethods.GZip;
+                string data;
+                using (HttpWebResponse response = (HttpWebResponse) request.GetResponse())
+                using (Stream stream = response.GetResponseStream())
+                using (StreamReader reader = new StreamReader(stream))
                 {
-                    m.Content = "";
-                    m.Embed = e.E;
-                });
+                    data = await reader.ReadToEndAsync();
+                }
+
+                JObject json = JsonConvert.DeserializeObject<JObject>(data);
+                if (json["status"].Equals("fail"))
+                    await msg.ModifyAsync(m =>
+                        m.Content = $"Couldn't find geolocation data, cause: \"{json["message"]}\"");
+                else
+                {
+                    try
+                    {
+                        string country = (string) json["country"];
+                        string cc = ((string) json["countryCode"]).ToLower();
+                        string region = (string) json["regionName"];
+                        string city = (string) json["city"];
+                        string zip = (string) json["zip"];
+                        float lat = (float) json["lat"];
+                        float lon = (float) json["lon"];
+                        string isp = (string) json["isp"];
+                        EmbedField f0 = new("Success: ", "true", true);
+                        EmbedField f1 = new("Country", $":flag_{cc}: {country}");
+                        EmbedField f2 = new("Full Address", $"{region}, {city}");
+                        EmbedField f3 = new("Provider Name", $"{isp}");
+                        EmbedField f4 = new("Latitude & Longitude", $"Lat: {lat}\nLon: {lon}");
+                        EmbedField f5 = new("Zip Code", $"{zip}");
+                        Embed e = new Embed("Geolocation Finder", Color.Orange, new[] {f0, f1, f2, f3, f4, f5},
+                            $"{Constants.EMBED_FOOTER} | Adr Query: {ip} ; Param: {param}");
+                        await msg.ModifyAsync(m =>
+                        {
+                            m.Content = "";
+                            m.Embed = e.E;
+                        });
+                    }
+                    catch (NullReferenceException exc)
+                    {
+                        throw new HttpRequestException(
+                            $"Could not get geolocation of address {ip}! Cause: \"{json["message"]}\"");
+                    }
+                }
             }
         }
     }
-}
