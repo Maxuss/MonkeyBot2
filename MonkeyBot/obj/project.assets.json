@@ -1460,11 +1460,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\MonkeyBot\\MonkeyBot\\MonkeyBot\\MonkeyBot.csproj",
+      "projectUniqueName": "D:\\MonkeyBot_2\\monkeybot_2\\MonkeyBot\\MonkeyBot.csproj",
       "projectName": "MonkeyBot",
-      "projectPath": "D:\\MonkeyBot\\MonkeyBot\\MonkeyBot\\MonkeyBot.csproj",
+      "projectPath": "D:\\MonkeyBot_2\\monkeybot_2\\MonkeyBot\\MonkeyBot.csproj",
       "packagesPath": "C:\\Users\\maxus\\.nuget\\packages\\",
-      "outputPath": "D:\\MonkeyBot\\MonkeyBot\\MonkeyBot\\obj\\",
+      "outputPath": "D:\\MonkeyBot_2\\monkeybot_2\\MonkeyBot\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\maxus\\AppData\\Roaming\\NuGet\\NuGet.Config",
