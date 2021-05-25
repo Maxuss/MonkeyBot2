@@ -43,7 +43,7 @@ namespace MonkeyBot.Commands
             EmbedField _4 = new EmbedField("Contacts",
                 $"Github Repository: {REPOSITORY}\nWebsite: {WEBSITE}\nDiscord Server Invite: {DISCORD_INVITE}");
             EmbedField _5 = new EmbedField("Developer Data",
-                $"Version: v{VERSION}\nShort Version v{SHORT_VERSION}\nBotName: {BOT_NAME}");
+                $"Version: v{VERSION}\nShort Version: v{SHORT_VERSION}\nBotName: {BOT_NAME}");
             EmbedField[] fs = new[] {_1, _2, _3, _4, _5};
             Embed e = new Embed("About MonkeyBotV2", Color.Orange, fs, EMBED_FOOTER);
             return e.E;
