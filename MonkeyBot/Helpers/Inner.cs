@@ -3,7 +3,7 @@ using System.Xml;
 
 namespace MonkeyBot.Helpers
 {
-    public static class GetData
+    public static class Inner
     {
         public static char GetPrefix()
         {
