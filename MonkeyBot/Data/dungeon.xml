@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<data>
+    <chest>
+        <!--Binds items in category to certain floor-->
+        <bind type="floor" floor="f1">
+            <!--
+            SYNTAX
+            @name - item name
+            @chance - 1/x chance to drop this item
+            @amount - max amount of this item can drop
+            @cost - cost of item by itself
+            @chest-cost - cost of item from chest
+            -->
+            <item name="Bonzo's Staff" chance="69"
+                  amount="1" cost="1500000" chest-cost="1600000" />
+            <item name="Bonzo's Mask" chance="35"
+                  amount="1" cost="500000" chest-cost="1000000" />
+            <item name="Red Nose" chance="10"
+                  amount="1" cost="25000" chest-cost="10000" />
+        </bind>
+        <bind type="floor" floor="f2">
+            <item name="Scarf Studies" chance="10"
+                  amount="2" cost="300000" chest-cost="100000" />
+            <item name="Adaptive Blade" chance="25"
+                  amount="1" cost="1000000" chest-cost="2600000" />
+        </bind>
+        <bind type="floor" floor="f3">
+            <item name="Adaptive Boots" chance="10"
+                  amount="1" cost="500000" chest-cost="500000" />
+            <item name="Adaptive Helmet" chance="10"
+                  amount="1" cost="500000" chest-cost="500000" />
+            <item name="Adaptive Chestplate" chance="50"
+                  amount="1" cost="2500000" chest-cost="1600000" />
+            <item name="Adaptive Leggings" chance="50"
+                  amount="1" cost="1500000" chest-cost="1400000" />
+        </bind>
+    </chest>
+</data>

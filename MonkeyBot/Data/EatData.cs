@@ -24,7 +24,8 @@ namespace MonkeyBot.Data
     ""c#"": ""is better than python for writing bots"",
     ""cum"": ""you sick idiot"",
     ""cock"": ""you sick idiot"",
-    ""sex"": ""you sick idiot""
+    ""sex"": ""you sick idiot"",
+    ""alejo"": ""crknge""
 }
 ";
 
