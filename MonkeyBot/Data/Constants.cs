@@ -13,5 +13,6 @@ namespace MonkeyBot.Data
         public const string SKYBLOCK_GUILD = "Macaques";
         public const string BOT_NAME = "MonkeyBot 2";
         public const string HY_API = "https://api.hypixel.net/";
+        public const string EMBED_FOOTER = "MonkeyBotV2 by maxus | Void Moment#8152";
     }
 }
