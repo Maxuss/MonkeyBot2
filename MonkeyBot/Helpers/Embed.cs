@@ -5,7 +5,7 @@ namespace MonkeyBot.Helpers
     public sealed class Embed
     {
         public Discord.Embed E;
-        
+        public EmbedBuilder Builder;
         public Embed(string title, Color color, EmbedField[] fields)
         {
             EmbedBuilder builder = new EmbedBuilder();
@@ -16,6 +16,7 @@ namespace MonkeyBot.Helpers
             }
             builder.WithColor(color);
             E = builder.Build();
+            Builder = builder;
         }
 
         public Embed(string title, Color color, EmbedField[] fields, string footer)
@@ -29,6 +30,7 @@ namespace MonkeyBot.Helpers
             builder.WithColor(color);
             builder.WithFooter(footer);
             E = builder.Build();
+            Builder = builder;
         }
 
         public Embed(string title, Color color, EmbedField[] fields, string footer, string url)
@@ -43,6 +45,7 @@ namespace MonkeyBot.Helpers
             builder.WithFooter(footer);
             builder.WithUrl(url);
             E = builder.Build();
+            Builder = builder;
         }
     }
 }
