@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Discord.Commands;
 using Discord.WebSocket;
 using MonkeyBot.Commands;
-
+using MonkeyBot.Hooks;
 namespace MonkeyBot
 {
     public class Program
@@ -30,10 +30,13 @@ namespace MonkeyBot
                 Console.WriteLine("Connected successfully");
                 return Task.CompletedTask;
             };
+            ReactionListener listener = new ReactionListener();
+            listener.HookReactionAdded(_client);
             CommandHandler handler = new CommandHandler(_client, new CommandService());
             await handler.InstallCommandsAsync();
             await Task.Delay(-1);
         }
+
         private Task Log(LogMessage msg)
         {
             Console.WriteLine(msg.ToString());
