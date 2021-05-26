@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -169,6 +170,28 @@ namespace MonkeyBot.Commands.Hypixel
                 default:
                     goto case "body";
             }
+        }
+
+        private async Task<JObject> GetPlayerSBDataAsync(string profile)
+        {
+            string hyUrl = $"{HY_API}/skyblock/profile?key={KEY}&profile={profile}";
+            WebRequest request = WebRequest.Create(hyUrl);
+            request.Method = "GET";
+            using WebResponse webResponse = await request.GetResponseAsync();
+            using Stream webStream = webResponse.GetResponseStream();
+            using StreamReader reader = new StreamReader(webStream);
+            string data = await reader.ReadToEndAsync();
+            return JsonConvert.DeserializeObject<JObject>(data);
+        }
+
+        public async Task<string[]> GetSkyblockProfileUuid(string userId)
+        {
+            JObject data = await GetPlayerDataAsync(userId);
+            JObject profiles = data["player"]["stats"]["SkyBlock"]["profiles"] as JObject;
+            JObject first = (JObject) profiles.Properties().Select(p => p.Name).FirstOrDefault();
+            string id = (string) first["profile_id"];
+            string cute = (string) first["cute_name"];
+            return new[] {id, cute};
         }
     }
     
