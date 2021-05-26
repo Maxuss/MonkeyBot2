@@ -7,6 +7,7 @@ using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 
+
 public class LoggingService
 {
     private TextWriter writer;

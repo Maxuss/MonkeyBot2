@@ -11,6 +11,7 @@ using EmbedField = MonkeyBot.Helpers.EmbedField;
 
 namespace MonkeyBot.Commands.Hypixel
 {
+    [Group("sb")]
     public class Bazaar : ModuleBase<SocketCommandContext>
     {
         private string KEY = Inner.GetHypixelKey();
@@ -32,9 +33,13 @@ namespace MonkeyBot.Commands.Hypixel
             }
             catch (NullReferenceException e)
             {
+                ErrorEmbed eE = new ErrorEmbed(e);
                 await message.ModifyAsync(m =>
-                    m.Content =
-                        $"Could not find requested item, either it does not exist, or there are API errors! \nError: {e.GetType()} | Exit code: -1");
+                {
+                    m.Content = "";
+                    m.Embed = eE.Embed;
+                });
+
             }
         }
 

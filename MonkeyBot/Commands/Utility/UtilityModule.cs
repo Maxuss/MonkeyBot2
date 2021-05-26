@@ -7,6 +7,7 @@ using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 using Discord;
 using MonkeyBot.Data;
+using MonkeyBot.Helpers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using EmbedField = MonkeyBot.Helpers.EmbedField;
@@ -14,6 +15,7 @@ using Embed = MonkeyBot.Helpers.Embed;
 
 namespace MonkeyBot.Commands.Utility
 {
+    [Group("dox")]
     public class UtilityModule : ModuleBase<SocketCommandContext>
     {
         [Command("ip")]
@@ -53,10 +55,12 @@ namespace MonkeyBot.Commands.Utility
             }
             catch (Exception e)
             {
+                ErrorEmbed er = new ErrorEmbed(e);
                 await msg.ModifyAsync(m =>
                 {
-                    m.Content = $"Looks like unexpected error occured! \nError: {e.GetType()} | Message: \"{e.Message}\"";
-                }); 
+                    m.Content = "";
+                    m.Embed = er.Embed;
+                });
             }
         }
 
@@ -72,8 +76,12 @@ namespace MonkeyBot.Commands.Utility
             }
             catch (HttpRequestException e)
             {
-                await msg.ModifyAsync(m => m.Content = $"Looks like an error occurred!\nError type: {e.GetType()} |\nError message: \"{e.Message}\""
-                );
+                ErrorEmbed er = new ErrorEmbed(e);
+                await msg.ModifyAsync(m =>
+                {
+                    m.Content = "";
+                    m.Embed = er.Embed;
+                });
             }
         }
 
@@ -136,7 +144,7 @@ namespace MonkeyBot.Commands.Utility
                             m.Embed = e.E;
                         });
                     }
-                    catch (NullReferenceException exc)
+                    catch (NullReferenceException)
                     {
                         throw new HttpRequestException(
                             $"Could not get geolocation of address {ip}! Cause: \"{json["message"]}\"");
