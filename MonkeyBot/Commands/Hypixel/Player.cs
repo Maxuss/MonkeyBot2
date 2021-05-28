@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Buffers.Text;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -7,6 +8,7 @@ using System.Net;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
+using System.Text;
 using Discord.Commands;
 using System.Threading.Tasks;
 using static MonkeyBot.Data.Constants;
@@ -17,6 +19,7 @@ using MonkeyBot.Requests;
 using Newtonsoft.Json;
 using Embed = MonkeyBot.Helpers.Embed;
 using EmbedField = MonkeyBot.Helpers.EmbedField;
+using System.IO.Compression;
 
 namespace MonkeyBot.Commands.Hypixel
 {
@@ -36,10 +39,12 @@ namespace MonkeyBot.Commands.Hypixel
             string icon = data[1];
             EmbedField ef = new EmbedField("Username", username);
             EmbedField ef1 = new EmbedField("Mojang UUID", uuid);
-            Embed e = new Embed("MonkeyBotV2 UUID Getter", Color.Orange, new[] {ef, ef1}, $"{EMBED_FOOTER} | UUID Getter");
+            Embed e = new Embed("MonkeyBotV2 UUID Getter", Color.Orange, new[] { ef, ef1 }, $"{EMBED_FOOTER} | UUID Getter");
             EmbedBuilder eb = e.Builder;
             eb.ImageUrl = icon;
             Discord.Embed de = eb.Build();
+
+            ////
             await msg.ModifyAsync(m =>
             {
                 m.Content = "";
@@ -59,7 +64,7 @@ namespace MonkeyBot.Commands.Hypixel
                 string aliases = await GetPlayerAliasesAsync(tmp[0]);
                 EmbedField _1 = new("Success", "true", true);
                 EmbedField _2 = new("Known aliases", aliases);
-                Embed em = new Embed("MonkeyBotV2 Aliases", Color.Orange, new[]{_1, _2}, $"{EMBED_FOOTER} | Minecraft aliases finder");
+                Embed em = new Embed("MonkeyBotV2 Aliases", Color.Orange, new[] { _1, _2 }, $"{EMBED_FOOTER} | Minecraft aliases finder");
                 await msg.ModifyAsync(m =>
                 {
                     m.Content = "";
@@ -89,7 +94,7 @@ namespace MonkeyBot.Commands.Hypixel
                 string url = GetSkin(tmp[0], param);
                 EmbedField _1 = new("Success", "true", true);
                 EmbedField _2 = new("If image does not appear, there are some internal errors", "_ _");
-                Embed emb = new Embed("MonkeyBotV2 Skin Stealer", Color.Orange, new[] {_1, _2},
+                Embed emb = new Embed("MonkeyBotV2 Skin Stealer", Color.Orange, new[] { _1, _2 },
                     $"{EMBED_FOOTER} | Skin Stealer");
                 EmbedBuilder eb = emb.Builder;
                 eb.ThumbnailUrl = url;
@@ -111,7 +116,24 @@ namespace MonkeyBot.Commands.Hypixel
                 });
             }
         }
-        
+
+        [Command("sb-test")]
+        public async Task SbTestAsync(string uuid)
+        {
+            string id = await GetSbProfileAsync(uuid);
+            JObject sbd = await GetPlayerSBDataAsync(id);
+            string inv = GetSkyblockInventoryData(sbd, uuid);
+            Console.WriteLine(inv);
+        }
+
+        public async Task<string> GetSbProfileAsync(string uuid)
+        {
+            JObject data = await GetPlayerDataAsync(uuid);
+            JObject dat = (JObject) data["player"]["stats"]["SkyBlock"]["profiles"];
+            IList<string> keys = dat.Properties().Select(p => p.Name).ToList();
+            return keys[0];
+        }
+
         private async Task<string[]> GetUUIDAsync(string user)
         {
             string mojangURL = "https://api.mojang.com/users/profiles/minecraft/" + user;
@@ -174,7 +196,7 @@ namespace MonkeyBot.Commands.Hypixel
 
         private async Task<JObject> GetPlayerSBDataAsync(string profile)
         {
-            string hyUrl = $"{HY_API}/skyblock/profile?key={KEY}&profile={profile}";
+            string hyUrl = $"https://api.hypixel.net/skyblock/profile?key="+KEY+"&profile="+profile;
             WebRequest request = WebRequest.Create(hyUrl);
             request.Method = "GET";
             using WebResponse webResponse = await request.GetResponseAsync();
@@ -184,14 +206,31 @@ namespace MonkeyBot.Commands.Hypixel
             return JsonConvert.DeserializeObject<JObject>(data);
         }
 
-        public async Task<string[]> GetSkyblockProfileUuid(string userId)
+        public string GetSkyblockInventoryData(JObject profiledata, string uuid)
         {
-            JObject data = await GetPlayerDataAsync(userId);
-            JObject profiles = data["player"]["stats"]["SkyBlock"]["profiles"] as JObject;
-            JObject first = (JObject) profiles.Properties().Select(p => p.Name).FirstOrDefault();
-            string id = (string) first["profile_id"];
-            string cute = (string) first["cute_name"];
-            return new[] {id, cute};
+            string raw = (string) profiledata["profile"]["members"][uuid]["inv_contents"]["data"];
+            byte[] compressed = Convert.FromBase64String(raw);
+            Console.WriteLine(Encoding.Unicode.GetString(compressed));
+            byte[] decompressed = DecompressGzip(compressed);
+            return Encoding.Unicode.GetString(decompressed);
+        }
+
+        public byte[] DecompressGzip(byte[] raw)
+        {
+            using (var source = new MemoryStream(raw))
+            {
+                byte[] lengthBytes = new byte[4];
+                source.Read(lengthBytes, 0, 4);
+
+                var length = BitConverter.ToInt32(lengthBytes, 0);
+                using (var decompressionStream = new GZipStream(source,
+                    CompressionMode.Decompress))
+                {
+                    var result = new byte[length];
+                    decompressionStream.Read(result, 0, length);
+                    return result;
+                }
+            }
         }
     }
     
