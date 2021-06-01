@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using EmbedField = MonkeyBot.Helpers.EmbedField;
 using Embed = MonkeyBot.Helpers.Embed;
-
+using static MonkeyBot.Data.Constants;
 namespace MonkeyBot.Commands.Utility
 {
     [Group("dox")]
@@ -43,7 +43,7 @@ namespace MonkeyBot.Commands.Utility
                             new("How does it work",
                                 "PING IP is ip gotten through sending requests to address.\nDNS IP is ip gotten through getting registered ips of dns address\nNote that `www.example.com` and `example.com` are different things!");
                         Embed e =
-                            new("IP Address finder", Color.Orange, new[] {f0, f1, f2, f3},
+                            new("IP Address finder", EMBED_COLOR, new[] {f0, f1, f2, f3},
                                 $"{Constants.EMBED_FOOTER} | IP Finder");
                         await msg.ModifyAsync(m =>
                         {
@@ -136,7 +136,7 @@ namespace MonkeyBot.Commands.Utility
                         EmbedField f3 = new("Provider Name", $"{isp}");
                         EmbedField f4 = new("Latitude & Longitude", $"Lat: {lat}\nLon: {lon}");
                         EmbedField f5 = new("Zip Code", $"{zip}");
-                        Embed e = new Embed("Geolocation Finder", Color.Orange, new[] {f0, f1, f2, f3, f4, f5},
+                        Embed e = new Embed("Geolocation Finder", EMBED_COLOR, new[] {f0, f1, f2, f3, f4, f5},
                             $"{Constants.EMBED_FOOTER} | Adr Query: {ip} ; Param: {param}");
                         await msg.ModifyAsync(m =>
                         {

@@ -11,8 +11,7 @@ namespace MonkeyBot.Commands.Fun
     {
         [Command("echo")]
         [Summary("Echoes whatever you say")]
-        public Task EchoAsync([Remainder] [Summary("The text to say")]
-            string echo) => ReplyAsync(echo);
+        public Task EchoAsync([Remainder] [Summary("The text to say")] string echo) => ReplyAsync(echo);
 
         [Command("choose")]
         [Summary("Chooses between 2 or more variants you give, separated by commas")]

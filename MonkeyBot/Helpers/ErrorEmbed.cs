@@ -1,16 +1,7 @@
-﻿using Discord.Commands;
+﻿
 using System;
-using System.IO;
-using System.Net;
-using System.Net.Http;
-using System.Net.NetworkInformation;
-using System.Threading.Tasks;
 using Discord;
 using MonkeyBot.Data;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using EmbedField = MonkeyBot.Helpers.EmbedField;
-using Embed = MonkeyBot.Helpers.Embed;
 
 
 namespace MonkeyBot.Helpers
@@ -27,14 +18,14 @@ namespace MonkeyBot.Helpers
             string innerMessage;
             string innerSource;
             string innerType;
-            try
+            Exception inn = err.InnerException;
+            if (inn != null)
             {
-                Exception inn = err.InnerException;
                 innerMessage = inn.Message;
                 innerType = $"{inn.GetType()}";
                 innerSource = inn.Source;
             }
-            catch(NullReferenceException)
+            else
             {
                 innerMessage = "None";
                 innerType = "None";
@@ -52,12 +43,12 @@ namespace MonkeyBot.Helpers
                 EmbedField _5 = new EmbedField($"Inner exception: {innerType}", _);
                 EmbedField _6 = new EmbedField($"Inner exception source: {innerSource}", _);
                 EmbedField _7 = new EmbedField($"Inner exception message:", innerMessage);
-                e = new Embed("MonkeyBotV2 Error report", Color.Red, new[] {_1, _2, _3, _4, _5, _6, _7},
+                e = new Embed("MonkeyBotV2 Error report", Constants.ERROR_COLOR, new[] {_1, _2, _3, _4, _5, _6, _7},
                     $"{Constants.EMBED_FOOTER} | Please, create issue on GitHub");
             }
             else
             {
-                e = new Embed("MonkeyBotV2 Error report", Color.Red, new[] {_1, _2, _3, _4},
+                e = new Embed("MonkeyBotV2 Error report", Constants.ERROR_COLOR, new[] {_1, _2, _3, _4},
                     $"{Constants.EMBED_FOOTER} | Please, create issue on GitHub");
             }
 

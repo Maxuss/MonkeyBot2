@@ -70,7 +70,7 @@ namespace MonkeyBot.Commands.Hypixel
                 $"Buy: {hBuy}\nSell: {hSell}");
             EmbedField f5 = new EmbedField("Lowest price per unit",
                 $"Buy: {lBuy}\nSell: {lSell}");
-            Embed e = new Embed("HySb Bazaar Entry summary", Color.Orange, new[]{f0,f1,f2,f3,f4,f5}, $"{EMBED_FOOTER} | Info on {ti}");
+            Embed e = new Embed("HySb Bazaar Entry summary", EMBED_COLOR, new[]{f0,f1,f2,f3,f4,f5}, $"{EMBED_FOOTER} | Info on {ti}");
             return e;
         }
     }
